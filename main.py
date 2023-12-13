@@ -102,6 +102,8 @@ class Ball:
         self.ball_radius = 10
         self.max_x_vel = 10
         self.hit_paddle = False  # Flag to check if the ball has hit the paddle
+        self.NEGATIVE_VELOCITY_FLOOR = -3
+        self.VELOCITY_FLOOR = 3
 
     def show(self):
         pygame.draw.circle(
@@ -128,6 +130,13 @@ class Ball:
             else:
                 ratio = (self.ballX - center) / (paddle.length // 2)
                 self.x_vel += self.max_x_vel * ratio
+
+            if self.x_vel < 0 and self.x_vel > self.NEGATIVE_VELOCITY_FLOOR:
+                self.x_vel = self.NEGATIVE_VELOCITY_FLOOR
+            elif self.x_vel > 0 and self.x_vel < self.VELOCITY_FLOOR:
+                self.x_vel = self.VELOCITY_FLOOR
+
+            self.hit_paddle = False
 
     def brick_collision_change(self, brick):
         brick_center_x = brick.rect.left + brick.rect.width // 2
@@ -345,6 +354,7 @@ while True:
                 # Reset points and lives
                 score = 0
                 lives = 3
+                brick = Bricks()
             else:
                 # Reset ball and paddle position
                 ball = Ball(int(scr_width / 2), int(scr_height * 0.8))
